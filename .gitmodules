@@ -1,3 +1,6 @@
 [submodule "omni-hook/lib/forge-std"]
 	path = omni-hook/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "omni-hook/lib/v4-periphery"]
+	path = omni-hook/lib/v4-periphery
+	url = https://github.com/Uniswap/v4-periphery
