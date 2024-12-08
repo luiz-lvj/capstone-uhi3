@@ -18,7 +18,10 @@ we are considering only the whitelisted tokens here) weighted by its price and p
  - Hook Address: [0x46da141D7c712824c04Ab1d3216C8368860f0088](https://sepolia.arbiscan.io/address/0x46da141D7c712824c04Ab1d3216C8368860f0088)
  - Pool Manager (Uniswap v4):  [0xc420C3A3F81f2A059fF56D45c0A82D1F9aF38dCc](https://sepolia.arbiscan.io/address/0xc420C3A3F81f2A059fF56D45c0A82D1F9aF38dCc)
  - PoolSwapTest: [0x1649883be9b0d4D83092CDB430c42E6d5C1B7cAB](https://sepolia.arbiscan.io/address/0x1649883be9b0d4D83092CDB430c42E6d5C1B7cAB)
+   - Example of Swap transaction: [0x773aed041d6d76cb934325deec92dca2ba8259b23fc12e3ba7dd8c7cc55e7f42](https://sepolia.arbiscan.io/tx/0x773aed041d6d76cb934325deec92dca2ba8259b23fc12e3ba7dd8c7cc55e7f42)
  - PoolModifyLiquidityTest: [0x2298870DB1Fa24F3F6cc1fa0B2760AB7c1803bC1](https://sepolia.arbiscan.io/address/0x2298870DB1Fa24F3F6cc1fa0B2760AB7c1803bC1)
+
+
 
 ## Tokens and Oracles deployed for tests (Arbitrum)
 - WBTC token: [0x313Adf3Fa3479F6Bf5aedBc7949EE5e1213F20B7](https://sepolia.arbiscan.io/address/0x313Adf3Fa3479F6Bf5aedBc7949EE5e1213F20B7)
