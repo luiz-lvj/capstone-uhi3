@@ -11,11 +11,34 @@ import {BaseHook} from "v4-periphery/src/base/hooks/BaseHook.sol";
 import {BalanceDelta} from "v4-core/types/BalanceDelta.sol";
 
 
-contract OmniHook is BaseHook {
+interface IRiskManagerStylus {
+    function init() external;
+
+    function owner() external view returns (address);
+
+    function addWhitelistedToken(address token, address price_oracle, address vol_oracle) external;
+
+    function allowedSwap(address user, int256 max_vol, address token_in, int256 token_in_amount, address token_out, int256 token_out_amount) external view returns (bool);
+
+    error NotOwner(address, address);
+
+    error TokenAlreadyWhitelisted(address);
+
+    error TokenNotWhitelisted(address);
+}
+
+
+contract RiskManagerHook is BaseHook {
 	using CurrencySettler for Currency;
 
+    error SwapNotAllowed(address user, int256 maxVol, address tokenIn, int256 tokenInAmount, address tokenOut, int256 tokenOutAmount);
 
-    constructor(IPoolManager _poolManager) BaseHook(_poolManager) {}
+
+    IRiskManagerStylus public riskManager;
+
+    constructor(IPoolManager _poolManager, IRiskManagerStylus _riskManager) BaseHook(_poolManager) {
+        riskManager = _riskManager;
+    }
 
 
     function getHookPermissions()
@@ -44,11 +67,27 @@ contract OmniHook is BaseHook {
     }
 
 
-    function afterSwap(address, PoolKey calldata key, IPoolManager.SwapParams calldata, BalanceDelta, bytes calldata hookData)
+    function afterSwap(address, PoolKey calldata key, IPoolManager.SwapParams calldata swapParams, BalanceDelta delta, bytes calldata hookData)
         external
         override
         returns (bytes4, int128)
     {
+
+        address tokenIn = swapParams.zeroForOne ? Currency.unwrap(key.currency0) : Currency.unwrap(key.currency1);
+        address tokenOut = swapParams.zeroForOne ? Currency.unwrap(key.currency1) : Currency.unwrap(key.currency0);
+
+
+        int256 tokenInAmount = swapParams.zeroForOne ? swapParams.amountSpecified : delta.amount1();
+        int256 tokenOutAmount = swapParams.zeroForOne ? delta.amount0() : swapParams.amountSpecified;
+
+
+        (address user, int256 maxVol) = abi.decode(hookData, (address, int256));
+
+
+        if (!riskManager.allowedSwap(user, maxVol, tokenIn, tokenInAmount, tokenOut, tokenOutAmount)) {
+            revert SwapNotAllowed(user, maxVol, tokenIn, tokenInAmount, tokenOut, tokenOutAmount);
+        }
+
         return (BaseHook.afterSwap.selector, 0);
     }
 

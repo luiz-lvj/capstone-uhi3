@@ -26,7 +26,7 @@
 extern crate alloc;
 
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_primitives::{I256,  Address}, prelude::*, msg};
+use stylus_sdk::{alloy_primitives::{I256,  Address}, prelude::*, msg, evm};
 
 use stylus_sdk::alloy_sol_types::sol;
 // Define some persistent storage using the Solidity ABI.
@@ -52,7 +52,7 @@ sol_storage! {
 sol! {
 
     // event OwnerSet(address indexed owner);
-    // event TokenWhitelisted(address indexed token, address indexed price_oracle, address indexed vol_oracle);
+    event TokenWhitelisted(address indexed token, address indexed price_oracle, address indexed vol_oracle);
 
     error NotOwner(address owner, address caller);
     error TokenAlreadyWhitelisted(address token);
@@ -137,7 +137,7 @@ impl RiskManager {
         price_oracle_setter.set(price_oracle);
         vol_oracle_setter.set(vol_oracle);
 
-        //evm::log(TokenWhitelisted { token, price_oracle, vol_oracle });
+        evm::log(TokenWhitelisted { token, price_oracle, vol_oracle });
 
         Ok(())
     }
