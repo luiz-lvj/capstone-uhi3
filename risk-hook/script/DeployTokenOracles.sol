@@ -38,15 +38,25 @@ contract  InitWhitelistTokens is Script {
 
         //IRiskManager riskManager = IRiskManager(0x0c5A679F14D0572bd710F03e08766394120A75eC);
 
-        MockERC20 token1 = new MockERC20("Token 1", "T1");
+        MockERC20 token1 = new MockERC20("WBTC", "WBTC");
 
         MockChainlinkDataFeed priceOracle = new MockChainlinkDataFeed(100_000_0000); // 100,000 USD
 
         MockChainlinkDataFeed volOracle = new MockChainlinkDataFeed(200000); // 20%
 
-        console.log("token1 address: ", address(token1));
-        console.log("priceOracle address: ", address(priceOracle));
-        console.log("volOracle address: ", address(volOracle));
+        MockERC20 token2 = new MockERC20("WETH", "WETH");
+
+        MockChainlinkDataFeed priceOracle2 = new MockChainlinkDataFeed(100_000_0000); // 100,000 USD
+
+        MockChainlinkDataFeed volOracle2 = new MockChainlinkDataFeed(600000); // 60%
+
+        console.log("WBTC address: ", address(token1));
+        console.log("WBTC priceOracle address: ", address(priceOracle));
+        console.log("WBTC volOracle address: ", address(volOracle));
+
+        console.log("WETH address: ", address(token2));
+        console.log("WETH priceOracle address: ", address(priceOracle2));
+        console.log("WETH volOracle address: ", address(volOracle2));
 
         vm.stopBroadcast();
         

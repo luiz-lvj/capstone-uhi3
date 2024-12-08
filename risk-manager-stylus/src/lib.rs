@@ -1,25 +1,5 @@
 //!
 //! Risk Manager
-//!
-//! The following contract implements the Counter example from Foundry.
-//!
-//! ```
-//! contract Counter {
-//!     uint256 public number;
-//!     function setNumber(uint256 newNumber) public {
-//!         number = newNumber;
-//!     }
-//!     function increment() public {
-//!         number++;
-//!     }
-//! }
-//! ```
-//!
-//! The program is ABI-equivalent with Solidity, which means you can call it from both Solidity and Rust.
-//! To do this, run `cargo stylus export-abi`.
-//!
-//! Note: this code is a template-only and has not been audited.
-//!
 
 // Allow `cargo stylus export-abi` to generate a main function.
 #![cfg_attr(not(feature = "export-abi"), no_main)]
@@ -53,6 +33,9 @@ sol! {
 
     // event OwnerSet(address indexed owner);
     event TokenWhitelisted(address indexed token, address indexed price_oracle, address indexed vol_oracle);
+    event SwapAllowed(address indexed user, bool is_allowed);
+
+
 
     error NotOwner(address owner, address caller);
     error TokenAlreadyWhitelisted(address token);
@@ -151,9 +134,12 @@ impl RiskManager {
         for i in 0..self.tokens.len() {
             let token = self.tokens.get(i).unwrap();
             let token_address = token.token.get();
+
+            
     
             let price_oracle = self.tokens_to_price_oracles.getter(token_address).get();
             let vol_oracle = self.tokens_to_vol_oracles.getter(token_address).get();
+
     
             let price_feed = IChainlinkFeed::new(price_oracle);
             let vol_feed = IChainlinkFeed::new(vol_oracle);
@@ -196,6 +182,7 @@ impl RiskManager {
     
         // Check if delta vol is allowed
         if delta_vol < I256::unchecked_from(0) {
+            evm::log(SwapAllowed { user, is_allowed: true });
             return Ok(true);
         }
     
@@ -204,6 +191,8 @@ impl RiskManager {
         } else {
             (user_vol * user_balance_usd + delta_vol) / user_balance_usd <= max_vol
         };
+
+        evm::log(SwapAllowed { user, is_allowed });
     
         Ok(is_allowed)
     }
